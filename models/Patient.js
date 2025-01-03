@@ -1,7 +1,13 @@
 const mongoose = require('mongoose');
 
-const patientSchema = mongoose.Schema({
-  patientID: { type: String, required: true, unique: true },
+const patientSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User', // Reference the User schema
+      required: true,
+    },
+    patientID: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   dob: { type: Date, required: true },
   gender: { type: String, required: true },
@@ -19,7 +25,9 @@ const patientSchema = mongoose.Schema({
   currentDiagnosis: { type: String }, 
   treatment: { type: String },           
   laboratory: { type: String },
-}, { timestamps: true });
+  },
+  { timestamps: true }
+);
 
 const Patient = mongoose.model('Patient', patientSchema);
 module.exports = Patient;
