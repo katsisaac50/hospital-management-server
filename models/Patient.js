@@ -16,6 +16,7 @@ const patientSchema = mongoose.Schema({
   maritalStatus: { type: String },
   occupation: { type: String },
   physicalExamination: { type: String },
+  currentDiagnosis: { type: String }, 
   treatment: { type: String },           
   laboratory: { type: String },
 }, { timestamps: true });

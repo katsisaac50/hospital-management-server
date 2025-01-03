@@ -105,17 +105,20 @@ const updatePatient = async (req, res) => {
     const { id } = req.params;
     const {
       name,
-      age,
+      dob,
       gender,
       contact,
-      diagnosis,
+      currentDiagnosis,
       treatment,
-      examination,
+      physicalExamination,
+      laboratory,
       medicalHistory,
     } = req.body;
+
+    console.log(req.body);
   
     // Validate incoming data (optional: use a validation library like Joi)
-    if (!name || !age || !gender || !contact) {
+    if (!name || !dob || !gender || !contact) {
       return res.status(400).json({ error: 'Missing required fields.' });
     }
   
@@ -125,12 +128,13 @@ const updatePatient = async (req, res) => {
         id,
         {
           name,
-          age,
+          dob,
           gender,
           contact,
-          diagnosis,
+          currentDiagnosis,
           treatment,
-          examination,
+          physicalExamination,
+          laboratory,
           medicalHistory,
         },
         { new: true } // Return the updated document
