@@ -95,10 +95,34 @@ const updateUserRole = async (req, res) => {
   }
 };
 
+// Get users with a specific role
+const getUsersByRole = async (req, res) => {
+  try {
+    const { role } = req.query;
+
+    if (!role) {
+      return res.status(400).json({
+        success: false,
+        message: 'Role query parameter is required.',
+      });
+    }
+
+    const users = await User.find({ role });
+    res.status(200).json({ success: true, data: users });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching users by role',
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
   getAllUsers,
   getUserById,
   updateUserRole,
+  getUsersByRole,
 };
