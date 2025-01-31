@@ -5,10 +5,12 @@ const connectDB = require('./config/db');
 
 dotenv.config();
 connectDB();
+
 const allowedOrigins = [
     'http://localhost:3000', 
-    'https://hospital-management-client-liard.vercel.app' // ✅ Add your deployed frontend URL
+    'https://hospital-management-client-kappa.vercel.app' // ✅ Add your deployed frontend URL
   ];
+
 const app = express();
 app.use(express.json());
 
