@@ -7,11 +7,12 @@ const patientSchema = new mongoose.Schema(
       ref: 'User', // Reference the User schema
       required: true,
     },
-    patientID: { type: String, required: true, unique: true },
+  patientID: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   dob: { type: Date, required: true },
-  gender: { type: String, required: true },
+  gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
   contact: { type: String, required: true },
+  status: { type: String, required: true },
   email: { type: String, required: true, unique: true },
   emergencyContact: { type: String },
   address: { type: String },
@@ -25,6 +26,7 @@ const patientSchema = new mongoose.Schema(
   currentDiagnosis: { type: String }, 
   treatment: { type: String },           
   laboratory: { type: String },
+  createdAt: { type: Date, default: Date.now }
   },
   { timestamps: true }
 );

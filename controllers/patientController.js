@@ -1,13 +1,14 @@
 const Patient = require('../models/Patient');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
+const getNextPatientId = require('./idCounterController')
 
 // Add a new patient and create a user record
 const addPatient = async (req, res) => {
-  try {
   
+  try {
+  // Note: Remember to remove patientId from the frontend input because it's made automatic now
     const {
-      patientID,
       name,
       dob,
       gender,
@@ -46,10 +47,11 @@ const addPatient = async (req, res) => {
       role: 'patient',
     });
 
+    const newPatientId = await getNextPatientId();
     // Create the patient record linked to the user
     const patient = new Patient({
       user: user._id,
-      patientID,
+      patientID: newPatientId,
       name,
       dob,
       gender,
@@ -91,6 +93,7 @@ const addPatient = async (req, res) => {
 // Get all patients
 
 const getPatients = async (req, res) => {
+console.log('bab')
   try {
     const patients = await Patient.find().populate('user', 'name email role');
     res.status(200).json(patients);
@@ -115,6 +118,22 @@ const getPatientById = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
+
+const getPatientByIdLab = async (req, res) => {
+  try {
+    const patient = await Patient.findById(req.params.id).populate('user', 'name email role');
+    // const patients = await Patient.find().select("fullName patientId dateOfBirth gender");
+    // res.json(patients);
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
+    }
+
+    res.status(200).json(patient);
+  } catch (error) {
+    console.error('Error fetching patient:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
 
 // Update patient details
 
@@ -180,6 +199,6 @@ const updatePatient = async (req, res) => {
 
   };
 
-module.exports = { getPatients, addPatient, getPatientById, updatePatient, deletePatient };
+module.exports = { getPatients, addPatient, getPatientById, getPatientByIdLab, updatePatient, deletePatient };
 
 

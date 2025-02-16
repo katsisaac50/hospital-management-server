@@ -118,6 +118,20 @@ const getUsersByRole = async (req, res) => {
   }
 };
 
+// Define the endpoint to fetch available roles dynamically from the User model
+ const getAllUserRoles = async (req, res) => {
+  try {
+    // Fetch distinct roles from the 'role' field in the User model
+    // const roles = await User.distinct('role');
+    
+    console.log(roles)
+    res.json({ roles });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error fetching roles from the database' });
+  }
+};
+
 module.exports = {
   registerUser,
   loginUser,
@@ -125,4 +139,5 @@ module.exports = {
   getUserById,
   updateUserRole,
   getUsersByRole,
+  getAllUserRoles,
 };

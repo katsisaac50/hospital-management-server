@@ -6,6 +6,7 @@ const {
   getUserById,
   updateUserRole,
   getUsersByRole,
+  getAllUserRoles,
 } = require('../controllers/userController');
 const { protect, admin } = require('../middlewares/authMiddleware'); // Middleware for authentication
 const router = express.Router();
@@ -13,6 +14,7 @@ const router = express.Router();
 router.post('/register', registerUser); // Public
 router.post('/login', loginUser);       // Public
 router.get('/', getUsersByRole);
+router.get('/roles', getAllUserRoles);
 
 // router.get('/', protect, admin, getAllUsers);          // Admin only
 // router
