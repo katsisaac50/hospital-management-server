@@ -98,7 +98,7 @@ const bulkUpdateLabResults = async (req, res) => {
 const deleteMedicalTestResults = async (req, res) => {
   try {
     const { testId } = req.params;
-    console.log("jj", testId)
+    // console.log("jj", testId)
     // Check if the test exists
     const testResult = await TestResult.findById(testId);
     if (!testResult) {
