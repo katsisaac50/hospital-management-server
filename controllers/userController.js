@@ -122,7 +122,7 @@ const getUsersByRole = async (req, res) => {
  const getAllUserRoles = async (req, res) => {
   try {
     // Fetch distinct roles from the 'role' field in the User model
-    // const roles = await User.distinct('role');
+     const roles = await User.distinct('role');
     
     console.log(roles)
     res.json({ roles });

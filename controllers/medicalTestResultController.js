@@ -39,7 +39,7 @@ const GetTestResults = async (req, res) => {
     }
 
     const testResults = await TestResult.find({ patientId })
-      .populate("testId", "testName referenceValue unit category") // Join test details
+      .populate("testName", "testName referenceValue unit category") // Join test details
       .sort({ createdAt: -1 }); // Sort newest first
 // console.log("testResults", testResults)
     res.status(200).json(testResults);
@@ -50,32 +50,69 @@ const GetTestResults = async (req, res) => {
 };
 
 const updateMedicalTestResults = async (req, res) => {
-console.log("hmmm")
-     // const { testId } = req.params;
-     const { testId, result } = req.body;
+  console.log('Authenticated user:', req.user);
+  console.log('testing', req.body, 'params', req.params)
+
+     const { id } = req.params;
+      const { result, testStatus} = req.body;
+
+     try {
+      if (req.user.role !== "labTechnician") {
+        return res.status(403).json({ error: "Access Denied" });
+      }
+  
+      
+  
+      const test = await TestResult.findById(id);
+      if (!test) return res.status(404).json({ error: "Test not found" });
+  
+      if (test.testStatus === "completed" && testStatus !== "completed") {
+        return res.status(400).json({ error: "Completed tests cannot be modified" });
+      }
+  console.log('test', test, result, testStatus);
+  
+      test.result = result;
+      test.testStatus = testStatus || test.testStatus;
+      await test.save();
+  
+      res.json({ message: "Test updated successfully", test });
+    } catch (error) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+};
+
+// Create lab Request 
+
+const labTestRequest = async (req, res) => {
+  console.log('team work', req.body)
+  const { patientId, doctorId, testName, testNotes, diagnosisHypothesis, sampleType, sampleCollectionDate } = req.body;
+
+  // Validation
+  if (!patientId || !doctorId || !testName) {
+    return res.status(400).json({ message: "Patient ID, Doctor ID, and Test Name are required" });
+  }
 
   try {
- 
-    if (!result) {
-      return res.status(400).json({ message: "New test result is required" });
-    }
+    // Create a new TestResult document with the form data
+    const newTestResult = new TestResult({
+      patientId,
+      doctorId,
+      testName,
+      testStatus: "requested", // Default status is 'requested'
+      sampleType,
+      sampleCollectionDate,
+      testNotes,
+      diagnosisHypothesis,
+    });
 
-    const updatedTest = await TestResult.findByIdAndUpdate(
-      testId,
-      { result },
-      { new: true, runValidators: true }
-    );
+    // Save the test request to the database
+    await newTestResult.save();
 
-    updatedTest.testId.updatedAt = Date.now();
-
-    if (!updatedTest) {
-      return res.status(404).json({ message: "Test result not found" });
-    }
-
-    res.status(200).json({ message: "Test result updated!", updatedTest });
+    // Respond with success message and the created test result
+    return res.status(201).json({ message: "Lab test request submitted successfully", data: newTestResult });
   } catch (error) {
-    console.error("Error updating test result:", error);
-    res.status(500).json({ message: "Server error" });
+    console.error("Error submitting lab test request:", error);
+    return res.status(500).json({ message: "Server error, could not process the request" });
   }
 };
 
@@ -84,7 +121,7 @@ const bulkUpdateLabResults = async (req, res) => {
   const { testIds, result } = req.body;
 
   try {
-    const results = await LabResult.updateMany(
+    const results = await TestResult.updateMany(
       { _id: { $in: testIds } },
       { $set: { result }, $push: { history: { result, updatedAt: Date.now() } } }
     );
@@ -120,4 +157,4 @@ module.exports = { AddMedicalTests,
   GetTestResults, 
   updateMedicalTestResults, 
   deleteMedicalTestResults,
-  bulkUpdateLabResults };
+  bulkUpdateLabResults, labTestRequest };

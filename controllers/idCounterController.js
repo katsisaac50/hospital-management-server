@@ -9,5 +9,5 @@ const getNextPatientId = async () => {
     return counter.counter;
   };
 
-  module.exports ={getNextPatientId}
+  module.exports ={getNextPatientId};
   

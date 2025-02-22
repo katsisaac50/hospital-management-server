@@ -34,8 +34,10 @@ app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/medicaltests', require('./routes/medicalTestRoutes'));
 app.use('/api/medicalTestResults', require('./routes/medicalTestResultsRoutes'));
+app.use('/api/lab-test-request', require('./routes/labTestRequestRoutes'));
 app.use('/api/activityLogs', require('./routes/activityLogRoutes'));
 app.use('/api/update-status', require('./routes/updateStatusRoutes'));
+app.use('/api/discharge/:patientId', require('./routes/dischargeFormRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

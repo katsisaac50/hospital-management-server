@@ -1,7 +1,7 @@
 const Patient = require('../models/Patient');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
-const getNextPatientId = require('./idCounterController')
+const {getNextPatientId} = require('./idCounterController')
 
 // Add a new patient and create a user record
 const addPatient = async (req, res) => {
@@ -12,6 +12,7 @@ const addPatient = async (req, res) => {
       name,
       dob,
       gender,
+      status,
       contact,
       email,
       password, // Password for user authentication
@@ -55,6 +56,7 @@ const addPatient = async (req, res) => {
       name,
       dob,
       gender,
+      status,
       contact,
       email,
       emergencyContact,
