@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const Test = require("../models/medicalTests");
 const TestResult = require("../models/medicalTestResults");
 
 const AddMedicalTests = async (req, res) => {
@@ -39,7 +40,7 @@ const GetTestResults = async (req, res) => {
     }
 
     const testResults = await TestResult.find({ patientId })
-      .populate("testName", "testName referenceValue unit category") // Join test details
+      .populate("testId", "testName referenceValue unit category") // Join test details
       .sort({ createdAt: -1 }); // Sort newest first
 // console.log("testResults", testResults)
     res.status(200).json(testResults);
@@ -84,8 +85,17 @@ const updateMedicalTestResults = async (req, res) => {
 // Create lab Request 
 
 const labTestRequest = async (req, res) => {
-  console.log('team work', req.body)
+  // console.log('team work', req.body)
   const { patientId, doctorId, testName, testNotes, diagnosisHypothesis, sampleType, sampleCollectionDate } = req.body;
+
+   // Fetch the corresponding test document
+        const test = await Test.findOne({ testName: testName });
+
+        if (!test) {
+            return res.status(400).json({ error: "Invalid test name: Test not found." });
+        }
+
+        console.log('test', test)
 
   // Validation
   if (!patientId || !doctorId || !testName) {
@@ -97,7 +107,7 @@ const labTestRequest = async (req, res) => {
     const newTestResult = new TestResult({
       patientId,
       doctorId,
-      testName,
+      testId: test._id, // Store the ObjectId, not a string,
       testStatus: "requested", // Default status is 'requested'
       sampleType,
       sampleCollectionDate,
