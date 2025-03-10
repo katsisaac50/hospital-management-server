@@ -6,25 +6,32 @@ const connectDB = require('./config/db');
 dotenv.config();
 connectDB();
 
-const allowedOrigins = [
-    'http://localhost:3000', 
-    'https://hospital-management-client-kappa.vercel.app' // ✅ Add your deployed frontend URL
-  ];
+// const allowedOrigins = [
+//     'http://localhost:3000', 
+//     'https://hospital-management-client-kappa.vercel.app' // ✅ Add your deployed frontend URL
+//   ];
+
+  const corsOptions = {
+    origin: ["https://hospital-management-client-kappa.vercel.app/", "http://localhost:3000"], // ✅ Adjust as needed
+    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    credentials: true,
+  };
 
 const app = express();
+app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use(cors({
-    origin: function (origin, callback) {
-      if (!origin || allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
-    },
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    credentials: true // ✅ Allow credentials (cookies, authorization headers, etc.)
-  }));
+// app.use(cors({
+//     origin: function (origin, callback) {
+//       if (!origin || allowedOrigins.includes(origin)) {
+//         callback(null, true);
+//       } else {
+//         callback(new Error('Not allowed by CORS'));
+//       }
+//     },
+//     methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//     credentials: true // ✅ Allow credentials (cookies, authorization headers, etc.)
+//   }));
 
 app.use('/api/patients', require('./routes/patientRoutes'));
 app.use('/api/auth', require('./routes/userRoutes'));
