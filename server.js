@@ -12,7 +12,7 @@ connectDB();
 //   ];
 
   const corsOptions = {
-    origin: ["https://hospital-management-client-kappa.vercel.app/", "http://localhost:3000"], // ✅ Adjust as needed
+    origin: "*",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   };
