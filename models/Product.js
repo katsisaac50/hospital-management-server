@@ -6,8 +6,8 @@ const productSchema = new mongoose.Schema({
   description: { type: String },
   quantity: { type: Number, required: true, default: 0 },
   price: { type: Number, required: true },
-  batchNumber: { type: String },
-  expiryDate: { type: Date },
+  batchNumber: { type: String, required: true },  // Unique batch number for each batch
+  expiryDate: { type: Date, required: true },  // Expiration date per batch
   createdAt: { type: Date, default: Date.now }
 });
 
