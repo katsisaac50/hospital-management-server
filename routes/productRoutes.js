@@ -70,26 +70,128 @@ router.delete('/:id', async (req, res) => {
 });
 
 // Update Product Price with History Tracking
-app.post('/update-price/:productId', async (req, res) => {
-  const { productId } = req.params;
-  const { newPrice } = req.body;
+// app.post('/update-price/:productId', async (req, res) => {
+//   const { productId } = req.params;
+//   const { newPrice } = req.body;
 
-  try {
-    const product = await Product.findById(productId);
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+//   try {
+//     const product = await Product.findById(productId);
+//     if (!product) return res.status(404).json({ message: 'Product not found' });
 
-    // Store old price in history
-    product.priceHistory.push({ price: product.price });
+//     // Store old price in history
+//     product.priceHistory.push({ price: product.price });
 
-    // Update current price
-    product.price = newPrice;
-    await product.save();
+//     // Update current price
+//     product.price = newPrice;
+//     await product.save();
 
-    res.json({ message: 'Price updated successfully', newPrice });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+//     res.json({ message: 'Price updated successfully', newPrice });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+//  Integrate with Billing & Invoices
+// async function addToBill(patientId, medicineId, quantity) {
+//   const medicine = await Medicine.findById(medicineId);
+//   if (!medicine) throw new Error('Medicine not found');
+
+//   const cost = medicine.price * quantity;
+
+//   const invoice = new Invoice({
+//     patientId,
+//     items: [{ name: medicine.name, price: medicine.price, quantity, total: cost }],
+//     totalAmount: cost
+//   });
+
+//   await invoice.save();
+// }
+
+// View Price History
+// app.get('/medicine-price-history/:medicineId', async (req, res) => {
+//   const { medicineId } = req.params;
+
+//   try {
+//     const medicine = await Medicine.findById(medicineId);
+//     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
+
+//     res.json({ name: medicine.name, currentPrice: medicine.price, priceHistory: medicine.priceHistory });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+// Add Supplier Prices When Restocking
+// app.post('/restock-medicine/:medicineId', async (req, res) => {
+//   const { medicineId } = req.params;
+//   const { supplierName, contact, purchasePrice, quantity } = req.body;
+
+//   try {
+//     const medicine = await Medicine.findById(medicineId);
+//     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
+
+//     // Add supplier details
+//     medicine.suppliers.push({
+//       name: supplierName,
+//       contact,
+//       purchasePrice,
+//       lastPurchased: new Date(),
+//     });
+
+//     // Increase stock
+//     medicine.quantity += quantity;
+//     await medicine.save();
+
+//     res.json({ message: 'Medicine restocked successfully', newStock: medicine.quantity });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+// View Supplier Prices & Compare
+// app.get('/medicine-suppliers/:medicineId', async (req, res) => {
+//   const { medicineId } = req.params;
+
+//   try {
+//     const medicine = await Medicine.findById(medicineId);
+//     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
+
+//     res.json({ medicine: medicine.name, suppliers: medicine.suppliers });
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
+
+// Choose the Cheapest Supplier When Restocking
+// async function getCheapestSupplier(medicineId) {
+//   const medicine = await Medicine.findById(medicineId);
+//   if (!medicine) throw new Error('Medicine not found');
+
+//   // Sort suppliers by purchase price (cheapest first)
+//   const cheapestSupplier = medicine.suppliers.sort((a, b) => a.purchasePrice - b.purchasePrice)[0];
+
+//   return cheapestSupplier;
+// }
+
+// Generate Reports on Supplier Spending
+// app.get('/supplier-spending', async (req, res) => {
+//   try {
+//     const medicines = await Medicine.find();
+
+//     let spendingReport = {};
+
+//     medicines.forEach(med => {
+//       med.suppliers.forEach(supplier => {
+//         if (!spendingReport[supplier.name]) spendingReport[supplier.name] = 0;
+//         spendingReport[supplier.name] += supplier.purchasePrice;
+//       });
+//     });
+
+//     res.json(spendingReport);
+//   } catch (error) {
+//     res.status(500).json({ message: error.message });
+//   }
+// });
 
 
-module.exports = router;
+ module.exports = router;

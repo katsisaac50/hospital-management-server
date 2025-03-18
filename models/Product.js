@@ -14,6 +14,14 @@ const productSchema = new mongoose.Schema({
       date: { type: Date, default: Date.now }, // ⏳ Track when price changed
     }
   ],
+  suppliers: [
+    {
+      name: String, // 🏢 Supplier name
+      contact: String, // 📞 Contact details
+      purchasePrice: Number, // 💵 Purchase price from this supplier
+      lastPurchased: { type: Date, default: Date.now }, // 📅 Last purchase date
+    }
+  ],
   batchNumber: { type: String, required: true },  // Unique batch number for each batch
   expiryDate: { type: Date, required: true },  // Expiration date per batch
   createdAt: { type: Date, default: Date.now }
