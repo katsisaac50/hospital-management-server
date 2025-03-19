@@ -26,11 +26,31 @@ console.log(product)
 
 // Update product stock
 router.put('/:id', async (req, res) => {
+  console.log('the gang', req.params)
+  const { id:productId } = req.params;
+  const updateData = req.body;
+
   try {
-    const updatedProduct = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json(updatedProduct);
+    let product = await Product.findById(productId);
+    // console.log('prod', product, "update", updateData)
+    if (!product) return res.status(404).json({ success: false, message: 'Product not found' });
+
+    // Track price changes
+    console.log("price", updateData.price , "pro", product.price)
+    if (updateData.price && updateData.price !== product.price) {
+      if (!product.priceHistory) {
+        product.priceHistory = [];  // Initialize the array if it's not already defined
+      }
+      product.priceHistory.push({ price: updateData.price });
+    }
+
+    // Update product details
+    Object.assign(product, updateData);
+
+    await product.save();
+    res.json({ success: true, message: 'Product updated successfully', product });
   } catch (error) {
-    res.status(400).json({ message: error.message });
+    res.status(500).json({ success: false, message: 'Error updating product', error });
   }
 });
 

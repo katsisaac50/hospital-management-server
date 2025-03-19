@@ -1,4 +1,3 @@
-const Invoice = require('../models/Invoice');
 const Invoice = require('../models/invoice.model');
 
 // 📌 Create Invoice

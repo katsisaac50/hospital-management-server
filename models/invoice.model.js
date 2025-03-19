@@ -1,71 +1,69 @@
 const mongoose = require('mongoose');
+const Counter = require('./counter.model'); // Import the counter model
 
 // Define the Invoice schema
 const invoiceSchema = new mongoose.Schema(
   {
     invoiceNumber: {
       type: String,
-      required: true,
       unique: true,
       trim: true,
     },
     patient: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Patient', // Reference to the Patient model
+      ref: 'Patient',
       required: true,
     },
     doctor: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User', // Reference to the User model (with role: doctor)
+      ref: 'User',
       required: true
     },
     services: [
       {
-        description: {
-          type: String,
-          required: true,
-        },
-        cost: {
-          type: Number,
-          required: true,
-        },
+        description: { type: String, required: true },
+        cost: { type: Number, required: true },
       },
     ],
-    totalAmount: {
-      type: Number,
-      required: true,
-    },
+    totalAmount: { type: Number, required: true },
+    amountPaid: { type: Number, default: 0 },
     paymentStatus: {
       type: String,
-      enum: ['paid', 'pending', 'cancelled'],
-      default: 'pending',
+      enum: ['Unpaid', 'Partial', 'Paid', 'Pending', 'Cancelled'],
+      default: 'Pending',
     },
     paymentMethod: {
       type: String,
-      enum: ['cash', 'credit_card', 'insurance', 'bank_transfer'],
-      default: 'cash',
+      enum: ['Cash', 'Credit Card', 'Insurance', 'Bank Transfer', 'Mobile Money'],
+      default: 'Cash',
     },
-    issueDate: {
-      type: Date,
-      default: Date.now,
-    },
-    dueDate: {
-      type: Date,
-    },
-    notes: {
-      type: String,
-    },
+    issueDate: { type: Date, default: Date.now },
+    dueDate: { type: Date },
+    notes: { type: String },
   },
-  {
-    timestamps: true, // Automatically add createdAt and updatedAt fields
-  }
+  { timestamps: true }
 );
 
-// Pre-save middleware to calculate the total amount
-invoiceSchema.pre('save', function (next) {
+// Auto-generate Invoice Number
+invoiceSchema.pre('save', async function (next) {
+  if (!this.invoiceNumber) {
+    try {
+      const counter = await Counter.findOneAndUpdate(
+        { name: 'invoice' },
+        { $inc: { seq: 1 } },
+        { new: true, upsert: true }
+      );
+      this.invoiceNumber = `INV-${counter.seq}`;
+    } catch (error) {
+      return next(error);
+    }
+  }
+
+  // Calculate total amount
   if (this.services && this.services.length > 0) {
     this.totalAmount = this.services.reduce((sum, service) => sum + service.cost, 0);
   }
+
   next();
 });
 

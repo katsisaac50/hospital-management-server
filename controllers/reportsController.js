@@ -1,7 +1,7 @@
 const Patient = require('../models/Patient');
 const User = require('../models/User');
 // Assuming Invoice model exists
-const Invoice = require('../models/Invoice');
+const Invoice = require('../models/invoice.model');
 
 /**
  * Get overall statistics for the hospital.
