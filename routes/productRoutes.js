@@ -142,31 +142,32 @@ router.delete('/:id', async (req, res) => {
 // });
 
 // Add Supplier Prices When Restocking
-// app.post('/restock-medicine/:medicineId', async (req, res) => {
-//   const { medicineId } = req.params;
-//   const { supplierName, contact, purchasePrice, quantity } = req.body;
+router.post('/restock-product/:productId', async (req, res) => {
+  const { productId } = req.params;
+  console.log("pdct",productId)
+  const { supplierName, contact, purchasePrice, quantity } = req.body;
 
-//   try {
-//     const medicine = await Medicine.findById(medicineId);
-//     if (!medicine) return res.status(404).json({ message: 'Medicine not found' });
+  try {
+    const product = await Product.findById(productId);
+    if (!product) return res.status(404).json({ message: 'Product not found' });
 
-//     // Add supplier details
-//     medicine.suppliers.push({
-//       name: supplierName,
-//       contact,
-//       purchasePrice,
-//       lastPurchased: new Date(),
-//     });
+    // Add supplier details
+    product.suppliers.push({
+      name: supplierName,
+      contact,
+      purchasePrice,
+      lastPurchased: new Date(),
+    });
 
-//     // Increase stock
-//     medicine.quantity += quantity;
-//     await medicine.save();
+    // Increase stock
+    product.quantity += quantity;
+    await product.save();
 
-//     res.json({ message: 'Medicine restocked successfully', newStock: medicine.quantity });
-//   } catch (error) {
-//     res.status(500).json({ message: error.message });
-//   }
-// });
+    res.json({ message: 'Medicine restocked successfully', newStock: product.quantity });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // View Supplier Prices & Compare
 // app.get('/medicine-suppliers/:medicineId', async (req, res) => {
