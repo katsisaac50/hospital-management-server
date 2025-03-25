@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const Product = require('../models/Product');
+const DispensedProduct = require('../models/DispensedProduct');
 
 // Get all products
 router.get('/', async (req, res) => {
@@ -59,7 +60,7 @@ router.post('/:id/dispense', async (req, res) => {
 
   try {
     const { id : productId } = req.params;
-    const { quantity } = req.body;
+    const { quantity, userId } = req.body;
 
     const product = await Product.findById(productId);
 
@@ -71,8 +72,23 @@ router.post('/:id/dispense', async (req, res) => {
     product.quantity -= quantity;
     
     await product.save();
-    console.log("HDLDFD", product)
-    res.json({ message: 'Product dispensed', product , totalCost });
+    
+    const dispensedProduct = new DispensedProduct({
+      productId,
+      quantity,
+      totalCost,
+      dispensedBy: userId, // user who dispensed the product
+      dispensedAt: new Date(), // current date/time
+    });
+
+    await dispensedProduct.save(); // Save the dispensing record
+
+    res.json({
+      message: 'Product dispensed successfully',
+      product,
+      totalCost,
+      dispensedProduct,
+    });
   } catch (error) {
     console.error("Error dispensing product:", error);
     res.status(500).json({ message: error.message });

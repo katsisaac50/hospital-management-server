@@ -32,6 +32,7 @@ app.use('/api/reports', require('./routes/reportsRoutes'));
 app.use('/api/invoices', require('./routes/invoicesRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/products', require('./routes/productRoutes'));
+app.use('/api/medicine', require('./routes/dispenseRoutes'));
 app.use('/api/medicaltests', require('./routes/medicalTestRoutes'));
 app.use('/api/medicalTestResults', require('./routes/medicalTestResultsRoutes'));
 app.use('/api/lab-test-request', require('./routes/labTestRequestRoutes'));
