@@ -39,6 +39,9 @@ app.use('/api/lab-test-request', require('./routes/labTestRequestRoutes'));
 app.use('/api/activityLogs', require('./routes/activityLogRoutes'));
 app.use('/api/update-status', require('./routes/updateStatusRoutes'));
 app.use('/api/discharge/:patientId', require('./routes/dischargeFormRoutes'));
+// app.use('/api/services', require('./routes/servicesRoutes'));
+// app.use('/api/doctor-notes', require('./routes/doctorNotesRoutes'));
+app.use('/api/finances', require('./routes/paymentRoutes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

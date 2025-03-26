@@ -1,0 +1,24 @@
+const transactionSchema = new mongoose.Schema({
+  payment_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Payment',
+    required: true
+  },
+  transaction_type: {
+    type: String,
+    enum: ['payment', 'refund'],
+    required: true
+  },
+  amount: {
+    type: Number,
+    required: true
+  },
+  transaction_date: {
+    type: Date,
+    required: true,
+    default: Date.now
+  },
+  notes: String
+});
+
+module.exports = mongoose.model('Transaction', transactionSchema);
