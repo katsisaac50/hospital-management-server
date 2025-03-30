@@ -26,6 +26,12 @@ const patientSchema = new mongoose.Schema(
   currentDiagnosis: { type: String }, 
   treatment: { type: String },           
   laboratory: { type: String },
+  services: [
+    {
+      serviceId: { type: mongoose.Schema.Types.ObjectId, ref: 'Service', required: true },
+      price: { type: Number, required: true },
+    },
+  ],
   createdAt: { type: Date, default: Date.now }
   },
   { timestamps: true }

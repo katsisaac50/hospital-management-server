@@ -1,7 +1,8 @@
 const Patient = require('../models/Patient');
 const User = require('../models/User');
 const generateToken = require('../utils/generateToken');
-const {getNextPatientId} = require('./idCounterController')
+const {getNextPatientId} = require('./idCounterController');
+const Service = require('../models/Service');
 
 // Add a new patient and create a user record
 const addPatient = async (req, res) => {
@@ -15,7 +16,6 @@ const addPatient = async (req, res) => {
       status,
       contact,
       email,
-      password, // Password for user authentication
       emergencyContact,
       address,
       medicalHistory,
@@ -27,28 +27,47 @@ const addPatient = async (req, res) => {
       physicalExamination,
       treatment,
       laboratory,
+      services
     } = req.body;
 
     // Validate required fields
-    if (!name || !dob || !gender || !contact || !email || !password) {
+    if (!name || !dob || !gender || !contact || !email) {
       return res.status(400).json({ message: 'Required fields are missing.' });
     }
 
     // Check if a user or patient with the same email already exists
     const existingUser = await User.findOne({ email });
+    console.log(existingUser)
+
     if (existingUser) {
       return res.status(400).json({ message: 'User with this email already exists.' });
     }
+
+    // Set a default password
+    const defaultPassword = "123456";
 
     // Create a new user with the role 'patient'
     const user = await User.create({
       name,
       email,
-      password,
+      password: defaultPassword, // Default password
       role: 'patient',
     });
 
     const newPatientId = await getNextPatientId();
+
+    // Check if services exist and prices are valid
+    const serviceIds = services.map((service) => service.serviceId);
+    const foundServices = await Service.find({ '_id': { $in: serviceIds } });
+
+    const newServices = services.map((service) => {
+      const foundService = foundServices.find((s) => s._id.toString() === service.serviceId);
+      return {
+        serviceId: foundService._id,
+        price: service.price,
+      };
+    });
+    console.log("newServices",newServices)
     // Create the patient record linked to the user
     const patient = new Patient({
       user: user._id,
@@ -70,7 +89,9 @@ const addPatient = async (req, res) => {
       physicalExamination,
       treatment,
       laboratory,
+      services: newServices,
     });
+    
 
     // Save the patient to the database
     const createdPatient = await patient.save();
@@ -83,6 +104,7 @@ const addPatient = async (req, res) => {
         email: user.email,
         role: user.role,
         token: generateToken(user._id), // Optional: Return a token for authentication
+        defaultPassword, // Inform the frontend of the default password
       },
       patient: createdPatient,
     });
