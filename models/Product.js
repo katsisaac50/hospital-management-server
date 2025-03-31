@@ -22,7 +22,7 @@ const productSchema = new mongoose.Schema({
       lastPurchased: { type: Date, default: Date.now }, // 📅 Last purchase date
     }
   ],
-  batchNumber: { type: String, required: true },  // Unique batch number for each batch
+  batchNumber: { type: String, required: true, unique: true },  // Unique batch number for each batch
   expiryDate: { type: Date, required: true },  // Expiration date per batch
   createdAt: { type: Date, default: Date.now }
 });

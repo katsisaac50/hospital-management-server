@@ -15,9 +15,17 @@ router.get('/', async (req, res) => {
 
 // Add a new product
 router.post('/', async (req, res) => {
-  const product = new Product(req.body);
-console.log(product)
   try {
+    const { batchNumber } = req.body;
+
+    // Check if a product with the same batch number already exists
+    const existingProduct = await Product.findOne({ batchNumber });
+
+    if (existingProduct) {
+      return res.status(400).json({ message: 'A product with this batch number already exists' });
+    }
+
+    const product = new Product(req.body);
     const newProduct = await product.save();
     res.status(201).json(newProduct);
   } catch (error) {
