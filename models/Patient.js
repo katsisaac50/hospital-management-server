@@ -13,7 +13,7 @@ const patientSchema = new mongoose.Schema(
   gender: { type: String, enum: ["Male", "Female", "Other"], required: true },
   contact: { type: String, required: true },
   status: { type: String },
-  email: { type: String, required: true, unique: true },
+  email: { type: String, unique: true, sparse: true }, // Make email optional
   emergencyContact: { type: String },
   address: { type: String },
   medicalHistory: { type: String },
